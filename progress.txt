@@ -1,0 +1,47 @@
+- wat heb ik gedaan
+	towers
+		types:
+			canon tower
+		attacking
+		upgrades
+		chain systeem(build range)
+		killable
+	enemies
+		types:
+			general
+		movement
+		attacking
+		spawn system
+	resource buildings
+		types:
+			windmill
+			sawmill
+			mine
+		resource collection
+		upgrades
+	UI
+		building buttons
+		resource display
+		upgrade menu
+		main menu
+		pause
+- wat moet ik nog doen
+	towers
+		types:
+			mortar tower
+			musket tower
+		killable chain system
+		upgrade with resources
+	enemies
+		types:
+			soldier
+			canon
+		animation
+	UI
+		pause menu
+		health bars
+	
+- wat ga ik niet af krijgen
+	is nog niet zeker.
+- hoe kan ik dat voorkomen
+	zie hierboven.
