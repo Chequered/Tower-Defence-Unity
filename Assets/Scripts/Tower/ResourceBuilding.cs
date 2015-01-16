@@ -21,14 +21,14 @@ public class ResourceBuilding : MonoBehaviour
 	public float range;
 	public float productionCooldown;
 	public int productionStrength;
+	public bool invisible;
 
 	//vars
-	protected bool build;
+	public bool build;
 	
 	Vector3 rangeScale = new Vector3(0,0,0);
 	private void Start()
 	{
-		
 		maxHP = hp;
 		
 		productionCost = baseUpgradeCost;
@@ -59,30 +59,33 @@ public class ResourceBuilding : MonoBehaviour
 	float timeSinceLastProduction = 0;
 	private void Update()
 	{
-		if(build)
+		if(!GameManager.paused)
 		{
-			if(timeSinceLastProduction < Time.time)
+			if(build)
 			{
-				Produce();
-			}
-			if(towerLinked == null)
-			{
-				bool foundTower = false;
-				foreach(GameObject tower in GameManager.gm.towers)
+				if(timeSinceLastProduction <= Time.time)
 				{
-					if(!foundTower)
+					Produce();
+				}
+				if(towerLinked == null)
+				{
+					bool foundTower = false;
+					foreach(GameObject tower in GameManager.gm.towers)
 					{
-						if(Vector3.Distance(transform.position, tower.transform.position) <= range)
+						if(!foundTower)
 						{
-							towerLinked = tower;
-							foundTower = true;
-							GetComponent<LineRenderer>().SetPosition(1, tower.transform.position);
+							if(Vector3.Distance(transform.position, tower.transform.position) <= range)
+							{
+								towerLinked = tower;
+								foundTower = true;
+								GetComponent<LineRenderer>().SetPosition(1, tower.transform.position);
+							}
 						}
 					}
-				}
-				if(!foundTower)
-				{
-					Kill();
+					if(!foundTower)
+					{
+						Kill();
+					}
 				}
 			}
 		}
@@ -137,8 +140,6 @@ public class ResourceBuilding : MonoBehaviour
 				rangeScale.x = range * 2;
 				rangeScale.z = range * 2;
 				rangeObj.transform.localScale = rangeScale;
-
-				Debug.Log("range");
 			}
 		}
 		if(type == "Production_Speed")
@@ -180,9 +181,12 @@ public class ResourceBuilding : MonoBehaviour
 
 	public void Kill()
 	{
-		GameManager.gm.towers.Remove(this.gameObject);
-		//play anim
-		Destroy(this.gameObject); //destroy after anim length
+		if(!invisible)
+		{
+			GameManager.gm.towers.Remove(this.gameObject);
+			//play anim
+			Destroy(this.gameObject); //destroy after anim length
+		}
 	}
 	
 	private bool hovering;

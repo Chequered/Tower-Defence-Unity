@@ -14,6 +14,8 @@ public class SpawnManager : MonoBehaviour
 		StartCoroutine(StartSpawning(0));
 	}
 
+	private int spawnedSoFar = 0;
+
 	private IEnumerator StartSpawning(int enemyID)
 	{
 		while(true)
@@ -21,12 +23,16 @@ public class SpawnManager : MonoBehaviour
 			int amount = Random.Range(0, 4);
 			yield return new WaitForSeconds(baseTime + amount);
 			amount = Random.Range(0, 4);
+			amount += (int) (spawnedSoFar / 85);
 			for(int i = 0; i < amount; i++)
 			{
 				if(!GameManager.paused)
 				{
-					GameObject e = Instantiate(enemies[enemyID], randomSpawnpoint(), Quaternion.identity) as GameObject;
+					GameObject e;
+					e = Instantiate(enemies[enemyID], randomSpawnpoint(), Quaternion.identity) as GameObject;
+					e.transform.FindChild("Enemy Object").GetComponent<Enemy>().AddHealth(spawnedSoFar / 35);
 					GameManager.gm.enemies.Add(e.transform.FindChild("Enemy Object").gameObject);
+					spawnedSoFar++;
 				}
 			}
 		}
@@ -34,9 +40,11 @@ public class SpawnManager : MonoBehaviour
 
 	private void Update()
 	{
+		//Debug only
 		if(Input.GetKeyUp(KeyCode.F))
 		{
 			GameObject e = Instantiate(enemies[0], randomSpawnpoint(), Quaternion.identity) as GameObject;
+			e.transform.FindChild("Enemy Object").GetComponent<Enemy>().AddHealth(spawnedSoFar / 35);
 			GameManager.gm.enemies.Add(e.transform.FindChild("Enemy Object").gameObject);
 		}
 	}

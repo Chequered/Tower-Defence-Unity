@@ -113,7 +113,7 @@ public class Buildmanager : MonoBehaviour {
 				}
 				if(buildMode == BuildMode.Windmill)
 				{
-					if (hit.transform.tag == "Area_Farm")
+					if (hit.transform.tag == "Area_Grass")
 					{
 						if (Input.GetMouseButtonUp(0))
 						{
@@ -144,6 +144,30 @@ public class Buildmanager : MonoBehaviour {
 				}
 			}
         }
+		if(Input.GetKeyUp(KeyCode.Alpha1))
+		{
+			SetBuildMode("GunTower");
+		}
+		if(Input.GetKeyUp(KeyCode.Alpha2))
+		{
+			SetBuildMode("MusketTower");
+		}
+		if(Input.GetKeyUp(KeyCode.Alpha3))
+		{
+			SetBuildMode("MortarTower");
+		}
+		if(Input.GetKeyUp(KeyCode.Alpha4))
+		{
+			SetBuildMode("Windmill");
+		}
+		if(Input.GetKeyUp(KeyCode.Alpha5))
+		{
+			SetBuildMode("SawMill");
+		}
+		if(Input.GetKeyUp(KeyCode.Alpha6))
+		{
+			SetBuildMode("Mine");
+		}
     }
 
     private void Build(Vector3 pos)
@@ -171,7 +195,7 @@ public class Buildmanager : MonoBehaviour {
 				}
 			}
 		}else{
-			GameManager.gm.mUI.GetComponent<CanvasManager>().PrintMessage("You have insufficient resources!", 3);
+			GameManager.gm.mUI.GetComponent<CanvasManager>().PrintMessage("You have insufficient resources!", 5);
 		}
     }
 

@@ -125,6 +125,11 @@ public class Enemy : MonoBehaviour
 		target = GameManager.gm.hq;	
 	}
 
+	public void AddHealth(int h)
+	{
+		health += h;
+	}
+
 	public int GetHealth()
 	{
 		return this.health;

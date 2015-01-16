@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MortarExplosion : MonoBehaviour {
 
@@ -7,17 +8,28 @@ public class MortarExplosion : MonoBehaviour {
 
 	private int dmg;
 
-	public void GiveStats(float dmg)
+	public void GiveStats(int dmg)
 	{
 		this.dmg = dmg;
 	}
 
 	private void Start()
 	{
-		GameObject[] enemiesInRange = Physics.OverlapSphere(transform.position, explosionRadius);
-		foreach(GameObject enem in enemiesInRange)
+		List<GameObject> enemiesInRange = new List<GameObject>();
+		foreach(GameObject enem in GameManager.gm.enemies)
 		{
-			enem.GetComponent<Enemy>().OnAttack(
+			if(Vector3.Distance(transform.position, enem.transform.position) < explosionRadius)
+			{
+				enemiesInRange.Add(enem);
+			}
 		}
+		for(int i = 0; i < enemiesInRange.Count; i++)
+		{
+			if(enemiesInRange[i].GetComponent<Enemy>())
+			{
+				enemiesInRange[i].GetComponent<Enemy>().OnAttack(dmg);
+			}
+		}
+		Destroy(this.gameObject, 55);
 	}
 }

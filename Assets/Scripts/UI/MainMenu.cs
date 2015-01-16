@@ -8,6 +8,7 @@ public class MainMenu : MonoBehaviour {
 
 	private GameObject settingsMenu;
 	private GameObject creditsMenu;
+	private GameObject helpMenu;
 
 	private void Start()
 	{
@@ -18,6 +19,7 @@ public class MainMenu : MonoBehaviour {
 		}
 		settingsMenu = transform.FindChild("Settings").gameObject;
 		creditsMenu = transform.FindChild("Credits").gameObject;
+		helpMenu = transform.FindChild("HowToPlay").gameObject;
 
 		if(PlayerPrefs.GetInt("Cheats") == 1)
 		{
@@ -33,6 +35,18 @@ public class MainMenu : MonoBehaviour {
 		}
 		settingsMenu.SetActive(true);
 		creditsMenu.SetActive(false);
+		helpMenu.SetActive(false);
+	}
+	
+	public void GoToCreditsScreen()
+	{
+		for(int i = 0; i < transform.childCount; i++)
+		{
+			transform.GetChild(i).gameObject.SetActive(false);
+		}
+		settingsMenu.SetActive(false);
+		creditsMenu.SetActive(true);
+		helpMenu.SetActive(false);
 	}
 
 	public void GoToMainScreen()
@@ -43,10 +57,27 @@ public class MainMenu : MonoBehaviour {
 		}
 		settingsMenu.SetActive(false);
 		creditsMenu.SetActive(false);
+		helpMenu.SetActive(false);
+	}
+
+	public void GoToHelpScreen()
+	{
+		for(int i = 0; i < transform.childCount; i++)
+		{
+			transform.GetChild(i).gameObject.SetActive(false);
+		}
+		settingsMenu.SetActive(false);
+		creditsMenu.SetActive(false);
+		helpMenu.SetActive(true);
 	}
 
 	public void Toggle(bool b)
 	{
 		this.gameObject.SetActive(b);
+	}
+
+	public void ExitGame()
+	{
+		Application.Quit();
 	}
 }

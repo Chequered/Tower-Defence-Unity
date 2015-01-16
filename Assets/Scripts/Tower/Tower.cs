@@ -18,7 +18,7 @@ public class Tower : MonoBehaviour {
 	[SerializeField] protected int baseUpgradeCost;
 	[SerializeField] protected GameObject rangeCyl;
 
-	protected Gun gun;
+	[SerializeField] protected Gun gun;
 	protected List<GameObject> enemiesInRange = new List<GameObject>();
 	protected List<GameObject> removeQueue = new List<GameObject>();
 
@@ -30,10 +30,6 @@ public class Tower : MonoBehaviour {
 	Vector3 rangeScale = new Vector3(0,0,0);
     private void Start()
     {
-		if(canShoot)
-		{
-			gun = transform.FindChild("Gun").GetComponent<Gun>();
-		}
 
 		maxHp = hp;
 
@@ -103,22 +99,25 @@ public class Tower : MonoBehaviour {
 				}
 				if(towerLinked == null)
 				{
+
 					bool foundTower = false;
 					foreach(GameObject tower in GameManager.gm.towers)
 					{
 						if(!foundTower)
 						{
-							if(Vector3.Distance(transform.position, tower.transform.position) <= attackRange)
+							if(tower.transform.position != transform.position)
 							{
-								towerLinked = tower;
-								foundTower = true;
-								GetComponent<LineRenderer>().SetPosition(1, tower.transform.position);
+								if(Vector3.Distance(transform.position, tower.transform.position) <= attackRange)
+								{
+									towerLinked = tower;
+									foundTower = true;
+									GetComponent<LineRenderer>().SetPosition(1, tower.transform.position);
+								}
 							}
 						}
 					}
 					if(!foundTower)
 					{
-						Debug.Log("need a new tower");
 						Kill();
 					}
 				}
@@ -130,19 +129,21 @@ public class Tower : MonoBehaviour {
 	{
 		if(!Settings.disableParticles)
 		{
-			gun.particleSystem.Emit(45);
+			gun.particleSystem.Emit(2);
 		}
 		audio.pitch = Random.Range(0.8f, 1.3f);
 		audio.Play();
 		timeSinceLastShot = Time.time + shootCooldown;
-		if(enemiesInRange[0].GetComponent<Enemy>().OnAttack(damage))
-		{
-			enemiesInRange.Remove(enemiesInRange[0]);
-			ReselectTarget();
-		}
 		if(buildmode == BuildMode.MortarTower)
 		{
-			Instantiate(Buildmanager.BM.mortarExplosion, enemiesInRange[0].transform.position, Quaternion.identity);
+			GameObject expl = Instantiate(Buildmanager.BM.mortarExplosion, enemiesInRange[0].transform.position, Quaternion.identity) as GameObject;
+			expl.GetComponent<MortarExplosion>().GiveStats(damage);
+		}else{
+			if(enemiesInRange[0].GetComponent<Enemy>().OnAttack(damage))
+			{
+				enemiesInRange.Remove(enemiesInRange[0]);
+				ReselectTarget();
+			}
 		}
 	}
 
@@ -307,12 +308,20 @@ public class Tower : MonoBehaviour {
 
 	public void Select()
 	{
-		foreach(GameObject tower in GameManager.gm.towers)
+		if(Buildmanager.BM.canBuild)
 		{
-			tower.GetComponent<Tower>().Deselect();
+			foreach(GameObject tower in GameManager.gm.towers)
+			{
+				if(tower.GetComponent<Tower>())
+				{
+					tower.GetComponent<Tower>().Deselect();
+				}else{
+					tower.GetComponent<ResourceBuilding>().Deselect();
+				}
+			}
+			menu.Show();
+			ShowRange();
 		}
-		menu.Show();
-		ShowRange();
 	}
 
 	public void Deselect()

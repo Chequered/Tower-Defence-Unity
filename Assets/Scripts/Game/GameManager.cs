@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
 	public Resource stone;
 	public Resource food;
 
+	public AudioClip[] musicClips;
+	private int currentclip;
 
 	private void Awake()
 	{
@@ -48,23 +50,54 @@ public class GameManager : MonoBehaviour
 		SetPause(false);
 		if(PlayerPrefs.GetInt("Cheats") == 1)
 		{
-			GameManager.gm.AddResource(ResourceType.Gold, 9999);
-			GameManager.gm.AddResource(ResourceType.Food, 9999);	
-			GameManager.gm.AddResource(ResourceType.Wood, 9999);	
-			GameManager.gm.AddResource(ResourceType.Stone, 9999);	
+			GameManager.gm.AddResource(ResourceType.Gold, 99999);
+			GameManager.gm.AddResource(ResourceType.Food, 99999);	
+			GameManager.gm.AddResource(ResourceType.Wood, 99999);	
+			GameManager.gm.AddResource(ResourceType.Stone, 99999);	
 		}
+		currentclip = Random.Range(0, musicClips.Length);
+		audio.clip = musicClips[currentclip];
+		audio.Play();
 	}
 
+	bool sentGOMSG;
 	private void Update()
 	{
-		if(hq == null)
+		if(hq == null && !sentGOMSG)
 		{
 			paused = true;
+			mUI.GetComponent<CanvasManager>().GameOverMSG();
+			sentGOMSG = true;
 		}
 		if(Input.GetKeyUp(KeyCode.Space))
 		{
 			TogglePause();
-		}		                 
+		}
+		if(Input.GetKeyUp(KeyCode.KeypadPlus))
+		{
+			if(Time.timeScale < 10)
+			{
+				Time.timeScale += 1;
+			}
+		}
+		if(Input.GetKeyUp(KeyCode.KeypadMinus))
+		{
+			if(Time.timeScale > 1)
+			{
+				Time.timeScale -= 1;
+			}
+		}
+		if(!audio.isPlaying)
+		{
+			if(currentclip > musicClips.Length)
+			{
+				currentclip = 0;
+			}else{
+				currentclip++;
+			}
+			audio.clip = musicClips[currentclip];
+			audio.Play();
+		}
 	}
 
 	public void AddResource(ResourceType type, int amount)

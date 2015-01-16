@@ -16,6 +16,9 @@ public class CanvasManager : MonoBehaviour {
 	public GameObject showRanges;
 	public GameObject hideRanges;
 
+	public GameObject gameOverButton;
+	public Image fadePlane;
+
 	private void Start()
 	{
 		pausePanel = transform.FindChild("Paused panel").gameObject;
@@ -44,6 +47,17 @@ public class CanvasManager : MonoBehaviour {
 
 			notification.GetComponent<Image>().color = p;
 			msgText.color = t;
+		}
+
+		if(fadingOut)
+		{
+			Color c = fadePlane.color;
+			c.a += 0.0035f;
+			fadePlane.color = c;
+			if(c.a >= 1)
+			{
+				Application.LoadLevel(0);
+			}
 		}
 	}
 
@@ -104,15 +118,38 @@ public class CanvasManager : MonoBehaviour {
 		tooltip.gameObject.SetActive(true);
 		if(building.GetComponent<Tower>())
 		{
-			tooltip.GetComponent<BuildingToolTip>().SetText(building.GetComponent<Tower>().GetDescription() + "\n" + "Cost: " + building.GetComponent<Cost>().amount + " " + building.GetComponent<Cost>().type);
+			tooltip.GetComponent<BuildingToolTip>().SetText(building.GetComponent<Tower>().GetDescription() + "\n" + "Cost: " + building.GetComponent<Cost>().GetAmount() + " " + building.GetComponent<Cost>().type);
 		}else if(building.GetComponent<ResourceBuilding>()){
-			tooltip.GetComponent<BuildingToolTip>().SetText(building.GetComponent<ResourceBuilding>().GetDescription() + "\n" + "Cost: " + building.GetComponent<Cost>().amount + " " + building.GetComponent<Cost>().type);
+			tooltip.GetComponent<BuildingToolTip>().SetText(building.GetComponent<ResourceBuilding>().GetDescription() + "\n" + "Cost: " + building.GetComponent<Cost>().GetAmount() + " " + building.GetComponent<Cost>().type);
 		}
 	}
 
 	public void CloseToolTip()
 	{
 		tooltip.gameObject.SetActive(false);
+	}
+
+	public void GameOverMSG()
+	{
+		PrintMessage("Game Over", Mathf.Infinity);
+		gameOverButton.SetActive(true);
+	}
+
+	bool fadingIn;
+	public void FadeIn()
+	{
+		Color c = fadePlane.color;
+		c.a = 1;
+		fadePlane.color = c;
+		fadingIn = true;
+	}
+
+	bool fadingOut;
+	public void RestartGame()
+	{
+		Time.timeScale = 1;
+		fadingOut = true;
+		Destroy(gameOverButton);
 	}
 
 	public void HideRanges()
